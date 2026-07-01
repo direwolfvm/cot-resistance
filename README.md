@@ -112,6 +112,25 @@ finding, and the informative experiment moves to an **open, non-hardened model**
 *strong* defense (moving role perception out of style in latent space) needs
 open weights; see `docs/DESIGN.md` §6.
 
+### Providing the OpenAI key
+
+The key is read from `OPENAI_API_KEY` and never lives in code or git. Two ways:
+
+```bash
+cp .env.example .env && $EDITOR .env      # paste the key into the gitignored .env
+```
+
+or use the opt-in local setup page (writes .env for you; localhost only, never
+touches the chat):
+
+```bash
+ENABLE_KEY_SETUP=1 .venv/bin/uvicorn server.main:app
+# open http://127.0.0.1:8000/setup , paste the key, restart the server
+```
+
+The setup page 404s unless `ENABLE_KEY_SETUP=1`, and the write endpoint rejects
+any non-loopback caller — so a deployed image never exposes it.
+
 ### Backends
 
 | `MODEL_BACKEND` | What it is | Needs |
