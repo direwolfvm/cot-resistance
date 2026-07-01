@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cot-resistance — Authenticated Role Tags PoC</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="logo">⟦🔏⟧</span>
+    <div>
+      <h1>Authenticated Role Tags</h1>
+      <p class="sub">Defense PoC against role-confusion prompt injection · <span id="backend-name"></span> backend</p>
+    </div>
+  </div>
+  <div class="controls">
+    <label class="toggle" title="When OFF, role tags are plain text — forgeable, as in a conventional chat template.">
+      <input type="checkbox" id="defense-toggle" checked>
+      <span class="slider"></span>
+      <span class="toggle-label" id="toggle-label">Defense ON</span>
+    </label>
+    <button id="new-session" class="ghost">↺ New session</button>
+  </div>
+</header>
+
+<div class="presets">
+  <span class="presets-label">Attack presets:</span>
+  <button data-preset="cot">🧠 CoT forgery</button>
+  <button data-preset="system">⚙️ Fake system tag</button>
+  <button data-preset="tool">🔧 Fake tool output</button>
+  <button data-preset="benign">💬 Benign secret ask</button>
+</div>
+
+<main>
+  <!-- Left: what the end user sees -->
+  <section class="pane chat-pane">
+    <div class="pane-head">
+      <h2>Chat</h2><span class="pane-sub">what the user sees</span>
+    </div>
+    <div id="chat-log" class="chat-log"></div>
+    <form id="chat-form" class="composer">
+      <textarea id="chat-input" rows="2" placeholder="Message the assistant… (try a preset above)"></textarea>
+      <button type="submit" id="send-btn">Send</button>
+    </form>
+  </section>
+
+  <!-- Right: what actually happens in the text stream -->
+  <section class="pane inspector-pane">
+    <div class="pane-head">
+      <h2>Security console</h2><span class="pane-sub">the authenticated text stream</span>
+    </div>
+    <div id="inspector" class="inspector">
+      <div class="placeholder">
+        <p>Send a message to see each pipeline stage:</p>
+        <ol>
+          <li><b>Sanitize</b> — tag-lookalikes in untrusted input are escaped</li>
+          <li><b>Seal</b> — the segment gets an HMAC over (role, seq, prev-MAC, content-hash)</li>
+          <li><b>Verify</b> — the full MAC chain is re-checked before generation</li>
+          <li><b>Render</b> — the exact stream the model consumes</li>
+        </ol>
+        <p>Toggle the defense off and replay a preset to watch the same attack succeed.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
