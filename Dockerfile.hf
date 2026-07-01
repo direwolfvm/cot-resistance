@@ -1,0 +1,28 @@
+# Real-model (HF) backend. Heavy (torch + transformers + weights); needs a
+# GPU host, not vanilla Cloud Run. Build explicitly:
+#   docker build -f Dockerfile.hf -t cot-resistance-hf .
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    MODEL_BACKEND=hf \
+    HF_MODEL=Qwen/Qwen2.5-0.5B-Instruct
+
+WORKDIR /app
+
+COPY requirements.txt .
+# CPU torch wheel by default; swap the index-url for a CUDA build on a GPU host.
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir \
+        --index-url https://download.pytorch.org/whl/cpu torch \
+    && pip install --no-cache-dir "transformers>=4.44" accelerate
+
+COPY server/ ./server/
+COPY web/ ./web/
+
+RUN useradd --create-home --uid 10001 appuser
+USER appuser
+
+EXPOSE 8080
+CMD exec uvicorn server.main:app --host 0.0.0.0 --port ${PORT:-8080}
