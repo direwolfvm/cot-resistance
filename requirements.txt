@@ -1,0 +1,8 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2
+pytest>=8
+# Optional real-model backend (MODEL_BACKEND=hf). Not needed for the PoC.
+# transformers>=4.44
+# torch
+# accelerate
