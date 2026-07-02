@@ -155,9 +155,18 @@ OPENAI_API_KEY=sk-... MODEL_BACKEND=openai .venv/bin/uvicorn server.main:app
 MODEL_BACKEND=hf HF_MODEL=openai/gpt-oss-20b .venv/bin/uvicorn server.main:app
 ```
 
-gpt-4o refuses this attack battery even undefended (0% baseline ASR), so the
-`hf` backend on a non-hardened model like `gpt-oss-20b` is where the defense's
-value is actually measurable. See [docs/HF_SETUP.md](docs/HF_SETUP.md).
+gpt-4o refuses this attack battery even undefended (0% baseline ASR), so a
+non-hardened open model is where the defense's value is actually measurable —
+either the `hf` backend on `gpt-oss-20b` ([docs/HF_SETUP.md](docs/HF_SETUP.md)),
+or, on a consumer-GPU workstation, the local model-server route (no torch/MXFP4):
+
+```powershell
+.venv\Scripts\python -m eval.local_gpu --json results/local.json
+```
+
+It serves a vulnerable open model over any OpenAI-compatible local endpoint
+(and, where the machine has a GPU-arbitration service, leases the GPU for the
+run). See [docs/LOCAL_GPU.md](docs/LOCAL_GPU.md).
 
 The OpenAI backend, by default, flattens the conversation into one user message
 so the model must infer roles from *content* (reproducing the paper's

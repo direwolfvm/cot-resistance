@@ -147,5 +147,9 @@ vite.config.ts.timestamp-*
 __pycache__/
 *.pyc
 
+# Local model weights (bring-your-own; see docs/LOCAL_GPU.md)
+models/
+*.gguf
+
 # macOS
 .DS_Store

@@ -160,16 +160,24 @@ def main() -> int:
     return 0
 
 
+def _ensure_parent(path: str) -> None:
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+
+
 def _write_json(path: str, report: dict) -> None:
     text = json.dumps(report, indent=2)
     if path == "-":
         print(text)  # machine-readable payload goes to stdout
     else:
+        _ensure_parent(path)
         with open(path, "w") as f:
             f.write(text + "\n")
 
 
 def _write_csv(path: str, report: dict) -> None:
+    _ensure_parent(path)
     with open(path, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["id", "vector", "is_control", "leaked_off", "leaked_on"])
