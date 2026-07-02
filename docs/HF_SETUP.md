@@ -21,13 +21,10 @@ the smoothest path**.
 ```bash
 # in the repo, in a fresh venv
 python -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt
 
-# CUDA build of torch (pick the cu-version matching your driver; cu124 shown)
-pip install torch --index-url https://download.pytorch.org/whl/cu124
-
-# gpt-oss needs a recent transformers + the MXFP4 kernels
-pip install "transformers>=4.55" accelerate "triton>=3.4" kernels
+# one install: base + CUDA torch + transformers/triton/kernels, all pinned.
+# If your CUDA driver isn't 12.4, edit the cu124 line in requirements-hf.txt.
+pip install -r requirements-hf.txt
 
 # smoke test one generation before the full harness
 MODEL_BACKEND=hf HF_MODEL=openai/gpt-oss-20b \

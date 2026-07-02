@@ -1,0 +1,26 @@
+# HF open-model backend deps for the gpt-oss-20b experiment.
+# TARGET: Linux or WSL2 with an NVIDIA GPU + CUDA. Native Windows is not
+# recommended — the MXFP4/Triton kernels gpt-oss needs are unreliable there.
+# See docs/HF_SETUP.md.
+#
+# Install:  pip install -r requirements-hf.txt
+#
+# CUDA version: the torch wheel below targets CUDA 12.4 (cu124). If your driver
+# is different, change cu124 in the --extra-index-url to match (cu121, cu126, …)
+# and pip will pull the matching build.
+
+-r requirements.txt
+
+--extra-index-url https://download.pytorch.org/whl/cu124
+torch>=2.6,<2.8
+
+transformers>=4.55,<5      # gpt-oss support landed in 4.55
+accelerate>=1.0
+triton>=3.4                # MXFP4 kernels for gpt-oss (Linux/WSL2 only)
+kernels>=0.4               # HF kernel loader used by the gpt-oss MXFP4 path
+safetensors>=0.4
+huggingface-hub>=0.25
+
+# --- Fallback if MXFP4 won't build: 4-bit load of a smaller vulnerable model ---
+# Uncomment, then set HF_MODEL to e.g. Qwen/Qwen2.5-7B-Instruct (see HF_SETUP.md).
+# bitsandbytes>=0.43
