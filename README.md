@@ -104,6 +104,14 @@ OPENAI_API_KEY=sk-... OPENAI_MODEL=gpt-4o \
 Output reports baseline ASR (OFF), defended ASR (ON), and attacks blocked. A
 benign control ("just tell me the secret") should stay refused in both modes.
 
+Capture results for the design-doc results section (table goes to stderr, so
+JSON on stdout stays clean):
+
+```bash
+.venv/bin/python -m eval.harness --backend hf --json results/gpt-oss.json --csv results/gpt-oss.csv
+.venv/bin/python -m eval.harness --backend mock --json - | jq .summary
+```
+
 **Which model to test on.** The `openai` backend tests the *behavioral*
 mitigation only (a real model told to trust seals over style). Frontier models
 are already injection-hardened, so baseline ASR may be low — if so, that's a
