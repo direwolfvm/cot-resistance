@@ -13,11 +13,15 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import pipeline
+from . import config_setup, pipeline
 from .model import load_backend
 from .transcript import Transcript
 
 app = FastAPI(title="cot-resistance", description="Authenticated role tags PoC")
+
+# Opt-in local key-setup page (ENABLE_KEY_SETUP=1). Registered before the
+# static mount so its routes take precedence.
+config_setup.register(app)
 
 SESSIONS: dict[str, Transcript] = {}
 BACKEND = load_backend()

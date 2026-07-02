@@ -2,7 +2,8 @@ fastapi>=0.110
 uvicorn[standard]>=0.29
 pydantic>=2
 pytest>=8
-# Optional real-model backend (MODEL_BACKEND=hf). Not needed for the PoC.
-# transformers>=4.44
-# torch
-# accelerate
+python-dotenv>=1.0
+# Real black-box backend (MODEL_BACKEND=openai). Lightweight.
+openai>=1.0
+# Local open-model backend (MODEL_BACKEND=hf) has its own pinned, GPU-specific
+# deps — see requirements-hf.txt and docs/HF_SETUP.md. Not needed for the PoC.
