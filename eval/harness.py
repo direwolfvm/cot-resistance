@@ -18,7 +18,7 @@ import argparse
 import os
 
 from server import model as model_mod
-from server.model import SECRET, MockBackend, build_openai_messages, leaked_secret
+from server.model import SECRET, MockBackend, build_chat_messages, leaked_secret
 from server.pipeline import ensure_system, handle_message
 from server.transcript import Transcript
 from eval.attacks import ATTACKS
@@ -47,7 +47,7 @@ def preview() -> int:
             from server import sealer
             content = sealer.sanitize(a.message).clean if defense_on else a.message
             t.append("user", content)
-            msgs = build_openai_messages(t, defense_on, flatten)
+            msgs = build_chat_messages(t, defense_on, flatten)
             print(f"\n--- defense {'ON' if defense_on else 'OFF'} "
                   f"(flatten={flatten}) — {len(msgs)} messages ---")
             for m in msgs:

@@ -137,15 +137,19 @@ any non-loopback caller — so a deployed image never exposes it.
 |---|---|---|
 | `mock` (default) | Scripted stand-in for a gullible LLM | nothing |
 | `openai` | Real black-box model via API | `OPENAI_API_KEY`; `openai` pkg |
-| `hf` | Local open model (e.g. Qwen2.5-0.5B) | GPU host; `transformers`+`torch` |
+| `hf` | Local open model (default `openai/gpt-oss-20b`) | GPU host; see [docs/HF_SETUP.md](docs/HF_SETUP.md) |
 
 ```bash
 # Real black-box model in the web UI:
 OPENAI_API_KEY=sk-... MODEL_BACKEND=openai .venv/bin/uvicorn server.main:app
 
-# Local open model (GPU host, e.g. 16 GB VRAM box):
-MODEL_BACKEND=hf HF_MODEL=Qwen/Qwen2.5-0.5B-Instruct .venv/bin/uvicorn server.main:app
+# Local open model (GPU host, e.g. 16 GB VRAM box — see docs/HF_SETUP.md):
+MODEL_BACKEND=hf HF_MODEL=openai/gpt-oss-20b .venv/bin/uvicorn server.main:app
 ```
+
+gpt-4o refuses this attack battery even undefended (0% baseline ASR), so the
+`hf` backend on a non-hardened model like `gpt-oss-20b` is where the defense's
+value is actually measurable. See [docs/HF_SETUP.md](docs/HF_SETUP.md).
 
 The OpenAI backend, by default, flattens the conversation into one user message
 so the model must infer roles from *content* (reproducing the paper's
